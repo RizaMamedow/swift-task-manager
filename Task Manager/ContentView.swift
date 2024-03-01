@@ -7,13 +7,20 @@
 
 import SwiftUI
 
+// MARK: Main view of app
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            Home()
+                // MARK: Title
+                .navigationTitle("Task Manager")
+                // MARK: Title style
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 
+// MARK: Main app preview
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
