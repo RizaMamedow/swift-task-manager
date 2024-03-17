@@ -9,14 +9,22 @@ import SwiftUI
 import CoreData
 
 struct DynamicFilteredView<Content: View, T>: View where T: NSManagedObject {
+    let viewModel: DynamicFilteredViewModel
     @FetchRequest var request: FetchedResults<T>
     var content: (T) -> Content
     
     init(
-        predicate: NSPredicate,
+        viewModel: DynamicFilteredViewModel,
         @ViewBuilder _ content: @escaping (T) -> Content
     ) {
-        _request = FetchRequest(entity: T.entity(), sortDescriptors: [.init(keyPath: \Task.deadline, ascending: false)], predicate: predicate)
+        self.viewModel = viewModel
+        
+        _request = FetchRequest(
+            entity: T.entity(),
+            sortDescriptors: [.init(keyPath: \Task.deadline, ascending: false)],
+            predicate: self.viewModel.getDynamicPredicate()
+        )
+        
         
         self.content = content
     }

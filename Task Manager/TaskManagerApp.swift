@@ -11,13 +11,13 @@ import SwiftUI
 @main
 struct TaskManagerApp: App {
     // MARK: CoreData controller
-    @StateObject private var dataController = DataController()
+    @StateObject private var dataService = DataService()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 // MARK: Passes the controller to the view
-                .environment(\.managedObjectContext, dataController.container.viewContext)
+                .environment(\.managedObjectContext, dataService.container.viewContext)
         }
     }
 }

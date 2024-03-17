@@ -1,5 +1,5 @@
 //
-//  DataController.swift
+//  DataService.swift
 //  Task Manager
 //
 //  Created by Riza Mamedov on 08.02.2024.
@@ -9,7 +9,7 @@ import Foundation
 import CoreData
 
 
-class DataController: ObservableObject {
+class DataService: ObservableObject {
     let container = NSPersistentContainer(name: "TaskManager")
     
     init() {

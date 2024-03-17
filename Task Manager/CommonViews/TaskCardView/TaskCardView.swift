@@ -9,16 +9,15 @@ import SwiftUI
 
 // MARK: Task Card View
 struct TaskCardView: View {
-    // MARK: ObservedObject is required
     @ObservedObject var task: Task
-    @EnvironmentObject var taskModel: TaskViewModel
+    @EnvironmentObject var viewModel: TaskCardViewModel
     @Environment(\.self) var env
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10){
             HStack {
                 // MARK: Task type text
-                Text(task.type ?? AppConstants.defaultTaskCardTitle)
+                Text(task.type?.capitalized ?? AppConstants.defaultTaskTitle)
                     .font(.callout)
                     .padding(.vertical, 5)
                     .padding(.horizontal)
@@ -26,60 +25,58 @@ struct TaskCardView: View {
                         Capsule()
                             .fill(.ultraThinMaterial)
                     }
-                    .foregroundColor(AppConstants.textColor(task.color))
+                    .foregroundColor(AppConstants.getTextColor(task.color))
                 
                 Spacer()
                 
                 // MARK: Task edit button
-                if !task.isComplete || taskModel.currentTab != .failed {
+                if !task.isComplete || viewModel.currentTab != .failed {
                     Button {
-                        taskModel.editTask = task
-                        taskModel.openTaskManipulateScreen = true
-                        taskModel.setupTask()
+                        viewModel.openTaskScreen(task: task)
                     } label: {
                         Image(systemName: "square.and.pencil")
-                            .imageColorBy(backgroundColor: AppConstants.iconColor(task.color))
+                            .imageColorBy(backgroundColor: AppConstants.getIconColor(task.color))
                     }
                 }
             }
             
             // MARK: Task title text
-            Text(task.title ?? AppConstants.defaultTaskCardTitle)
+            Text(task.title ?? AppConstants.defaultTaskTitle)
                 .font(.title2.bold())
                 .padding(.vertical, 10)
-                .foregroundColor(AppConstants.textColor(task.color))
+                .foregroundColor(AppConstants.getTextColor(task.color))
             
             // MARK: Task datetime labels
             HStack(alignment: .bottom, spacing: 0) {
                 VStack(alignment: .leading, spacing: 10) {
                     Label {
-                        Text((task.deadline ?? AppConstants.defaultTaskCardDate).formatted(date: .long, time: .omitted))
-                            .foregroundColor(AppConstants.textColor(task.color))
+                        Text((task.deadline ?? AppConstants.defaultTaskDate).formatted(date: .long, time: .omitted))
+                            .foregroundColor(AppConstants.getTextColor(task.color))
                     } icon: {
                         Image(systemName: "calendar")
-                            .imageColorBy(backgroundColor: AppConstants.iconColor(task.color))
+                            .imageColorBy(backgroundColor: AppConstants.getIconColor(task.color))
                     }
                     .font(.caption)
                     
                     Label {
-                        Text((task.deadline ?? AppConstants.defaultTaskCardDate).formatted(date: .omitted, time: .shortened))
-                            .foregroundColor(AppConstants.textColor(task.color))
+                        Text((task.deadline ?? AppConstants.defaultTaskDate).formatted(date: .omitted, time: .shortened))
+                            .foregroundColor(AppConstants.getTextColor(task.color))
                     } icon: {
                         Image(systemName: "clock")
-                            .imageColorBy(backgroundColor: AppConstants.iconColor(task.color))
+                            .imageColorBy(backgroundColor: AppConstants.getIconColor(task.color))
                     }
                     .font(.caption)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 // MARK: Task complete/uncomplete button
-                if !task.isComplete || taskModel.currentTab != .failed {
+                if !task.isComplete || viewModel.currentTab != .failed {
                     Button {
                         withAnimation {
-                            taskModel.toggleTaskStatus(task, context: env.managedObjectContext)
+                            viewModel.toggleTaskStatus(task, context: env.managedObjectContext)
                         }
                     } label: {
-                        let shapeColor = AppConstants.textColor(task.color)
+                        let shapeColor = AppConstants.getTextColor(task.color)
                         
                         Circle()
                             .strokeBorder(shapeColor, lineWidth: 1.5)

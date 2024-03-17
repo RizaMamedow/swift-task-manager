@@ -8,8 +8,8 @@
 import SwiftUI
 
 // MARK: Home View
-struct Home: View {
-    @ObservedObject var taskModel: TaskViewModel = .init()
+struct HomeView: View {
+    @ObservedObject var viewModel: MainViewModel = .init()
     
     @Namespace var animation
     
@@ -38,17 +38,17 @@ struct Home: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical)
                 
-                TabBar()
+                tabBar()
                     .padding(.top, 5)
 
-                TaskView()               
+                taskView()
             }
             .padding()
         }
         // MARK: Add button
         .overlay(alignment: .bottom) {
             Button{
-                taskModel.openTaskManipulateScreen.toggle()
+                viewModel.openTaskEditScreen.toggle()
             } label: {
                 Label {
                     Text("Add Task")
@@ -76,38 +76,38 @@ struct Home: View {
 
         }
         // Task Manipulate
-        .fullScreenCover(isPresented: $taskModel.openTaskManipulateScreen) {
-            taskModel.toDefaults()
+        .fullScreenCover(isPresented: $viewModel.openTaskEditScreen) {
+            viewModel.toDefaults()
         } content: {
-            TaskManipulationView()
-                .environmentObject(taskModel)
+            TaskEditView()
+                .environmentObject(TaskEditViewModel.init(appViewModel: viewModel))
         }
     }
     
     @ViewBuilder
-    func TaskView() -> some View {
+    func taskView() -> some View {
         LazyVStack(spacing: 20){
-            DynamicFilteredView(predicate: taskModel.getDynamicPredicate()){ (task: Task) in
+            DynamicFilteredView(viewModel: .init(appViewModel: viewModel)) { (task: Task) in
                 TaskCardView(task: task)
-                    .environmentObject(taskModel)
+                    .environmentObject(TaskCardViewModel.init(appViewModel: viewModel, task: task))
             }
         }
         .padding(.top, 20)
     }
     
     @ViewBuilder
-    func TabBar() -> some View {
+    func tabBar() -> some View {
         HStack(spacing: 10) {
             ForEach(AppConstants.appTabs, id: \.self){ tab in
-                Text(tab.rawValue)
+                Text(tab.value)
                     .font(.callout)
                     .fontWeight(.semibold)
                     .scaleEffect(0.9)
-                    .foregroundColor(taskModel.currentTab == tab ? .white : .black)
+                    .foregroundColor(viewModel.currentTab == tab ? .white : .black)
                     .padding(.vertical, 6)
                     .frame(maxWidth: .infinity)
                     .background {
-                        if taskModel.currentTab == tab {
+                        if viewModel.currentTab == tab {
                             Capsule()
                                 .fill(.black)
                                 .matchedGeometryEffect(id: "TAB", in: animation)
@@ -116,7 +116,7 @@ struct Home: View {
                     .contentShape(Capsule())
                     .onTapGesture {
                         withAnimation {
-                            taskModel.currentTab = tab
+                            viewModel.currentTab = tab
                             
                         }
                     }
