@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-protocol ViewModelsType: ObservableObject {
+protocol ViewModelsType {
     var currentTab: AppTab { get set }
     
     var openTaskEditScreen: Bool { get set }

@@ -8,7 +8,7 @@
 import SwiftUI
 import CoreData
 
-class TaskEditViewModel: ViewModelsType {
+class TaskEditViewModel: ObservableObject, ViewModelsType {
     @Published private var appViewModel: MainViewModel
     
     @Published var currentTab: AppTab

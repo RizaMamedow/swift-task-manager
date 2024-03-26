@@ -9,7 +9,7 @@ import SwiftUI
 import CoreData
 
 
-class MainViewModel: ViewModelsType {
+class MainViewModel: ObservableObject, ViewModelsType {
     @Published var currentTab: AppTab = AppConstants.defaultAppTab
     
     @Published var openTaskEditScreen: Bool = false
